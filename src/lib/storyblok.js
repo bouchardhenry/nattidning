@@ -8,6 +8,12 @@ export const getStoryblokApi = storyblokInit({
 	components: {
 		page: Page,
 	},
+	/**
+	 * Render a small placeholder instead of throwing when a story references a
+	 * block whose component isn't registered yet (blocks land across several PRs,
+	 * and the blueprint's demo `home` story still contains a `teaser`).
+	 */
+	enableFallbackComponent: true,
 	apiOptions: {
 		/** Set the correct region for your space. https://www.storyblok.com/docs/packages/storyblok-js#example-region-parameter */
 		region: process.env.STORYBLOK_REGION || 'eu',
