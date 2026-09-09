@@ -2,11 +2,15 @@ import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
 
 import Page from '@/components/Page';
 
+import FilteredPosts from '@/components/FilteredPosts';
+
 export const getStoryblokApi = storyblokInit({
 	accessToken: process.env.STORYBLOK_DELIVERY_API_TOKEN,
 	use: [apiPlugin],
 	components: {
 		page: Page,
+		category: Page,
+		'filtered-posts': FilteredPosts,
 	},
 	/**
 	 * Render a small placeholder instead of throwing when a story references a

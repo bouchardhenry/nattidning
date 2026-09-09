@@ -21,6 +21,25 @@ export async function getAllArticles() {
 	return data.stories;
 }
 
+/** Every article in a specific category, newest first */
+export async function getArticlesByCategory(category) {
+	const storyblokApi = getStoryblokApi();
+
+	const { data } = await storyblokApi.get('cdn/stories', {
+		version: storyblokVersion,
+		content_type: 'article',
+		resolve_relations: RESOLVE_RELATIONS,
+		filter_query: {
+			category: {
+				in: category,
+			},
+		},
+		per_page: 100,
+		sort_by: 'first_published_at:desc',
+	});
+	return data.stories;
+}
+
 /** A single article by its slug (stories live in the articles/ folder). */
 export async function getArticleBySlug(slug) {
 	const storyblokApi = getStoryblokApi();

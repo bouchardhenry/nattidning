@@ -1,6 +1,7 @@
 import './globals.css';
 
 import StoryblokProvider from '@/components/StoryblokProvider';
+import Header from '@/components/Header';
 
 const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
 		<StoryblokProvider>
 			<html lang="sv">
 				<body>
+					<Header />
 					{children}
 					<footer>© {currentYear} Nattidning</footer>
 				</body>
