@@ -1,8 +1,11 @@
-import { getStoryblokApi, storyblokVersion } from '@/lib/storyblok';
+import { getStoryblokApi, storyblokVersion } from '@/lib/storyblok-api';
 
 /**
  * Shared Storyblok data helpers. Extend this file as the site grows
  * (list view, author page, category routing, ...).
+ *
+ * Imports the client from `@/lib/storyblok-api` rather than `@/lib/storyblok`
+ * so component modules (which import this file) don't form a cycle.
  */
 
 // Which reference fields the Delivery API should resolve into full stories.
@@ -21,7 +24,11 @@ export async function getAllArticles() {
 	return data.stories;
 }
 
-/** Every article in a specific category, newest first */
+/**
+ * Every article in a specific category, newest first.
+ * `category` is a plain-text field on the article holding the category slug
+ * (e.g. "nyheter"), so `in` matches it against the single requested value.
+ */
 export async function getArticlesByCategory(category) {
 	const storyblokApi = getStoryblokApi();
 

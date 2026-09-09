@@ -1,30 +1,41 @@
-import { getStoryblokApi, storyblokVersion } from '@/lib/storyblok';
+import { getStoryblokApi, storyblokVersion } from '@/lib/storyblok-api';
+import { SITE_URL } from '@/lib/site';
 
-/** Generate a sitemap for the site, including all Storyblok stories. */
+// Story components that map to a crawlable URL at `/{full_slug}`.
+const INDEXABLE_COMPONENTS = ['article', 'author', 'category'];
+
+/**
+ * Fetch every story, following pagination so nothing past the first page is
+ * dropped once the space grows beyond `per_page`.
+ */
+async function getAllStories(storyblokApi) {
+	const perPage = 100;
+	const stories = [];
+
+	for (let page = 1; ; page += 1) {
+		const { data } = await storyblokApi.get('cdn/stories', {
+			version: storyblokVersion,
+			per_page: perPage,
+			page,
+		});
+		stories.push(...data.stories);
+		if (data.stories.length < perPage) break;
+	}
+
+	return stories;
+}
+
+/** Dynamic sitemap: the site root plus every indexable Storyblok story. */
 export default async function sitemap() {
-    const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
-    const storyblokApi = getStoryblokApi();
+	const storyblokApi = getStoryblokApi();
+	const stories = await getAllStories(storyblokApi);
 
-    const { data } = await storyblokApi.get(`cdn/stories/`, {
-        version: storyblokVersion,
-        per_page: 100,
-    });
+	const storyPages = stories
+		.filter((story) => INDEXABLE_COMPONENTS.includes(story.content?.component))
+		.map((story) => ({
+			url: `${SITE_URL}/${story.full_slug}`,
+			lastModified: story.updated_at,
+		}));
 
-    const storyPages = data.stories
-        .filter((story) =>
-        ["article", "author", "category"].includes(story.content.component) &&
-        story.full_slug !== 'home' // Exclude the home page, which is already included separately
-        )
-        .map((story) => ({
-            url: `${siteUrl}/${story.full_slug}`,
-            lastModified: story.updated_at,
-        }));
-
-    return [
-        {
-            url: siteUrl,
-            lastModified: new Date(),
-        },
-        ...storyPages,
-    ];
+	return [{ url: SITE_URL, lastModified: new Date() }, ...storyPages];
 }

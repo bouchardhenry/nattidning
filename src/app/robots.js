@@ -1,11 +1,11 @@
-export default function robots() {
-    const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+import { SITE_URL } from '@/lib/site';
 
-    return {
-        rules: {
-            userAgent: '*',
-            allow: '/',
-        },
-        sitemap: `${siteUrl}/sitemap.xml`,
-    };
+export default function robots() {
+	return {
+		rules: {
+			userAgent: '*',
+			allow: '/',
+		},
+		sitemap: `${SITE_URL}/sitemap.xml`,
+	};
 }
