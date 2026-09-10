@@ -59,3 +59,44 @@ export function resolveAuthor(article) {
 	const author = article?.content?.author;
 	return author && typeof author === 'object' ? author : null;
 }
+
+export async function getStory(slug) {
+    const storyblokApi = getStoryblokApi();
+
+    const { data } = await storyblokApi.get(`cdn/stories/authors/${slug}`, {
+        version: storyblokVersion,
+    });
+
+    return data.story;
+}
+
+export async function getArticlesByAuthor(authorUuid) {
+    const storyblokApi = getStoryblokApi();
+
+    const { data } = await storyblokApi.get('cdn/stories', {
+        version: storyblokVersion,
+        content_type: 'article',
+        resolve_relations: RESOLVE_RELATIONS,
+        filter_query: {
+            author: {
+                in: authorUuid,
+            },
+        },
+        per_page: 100,
+        sort_by: 'first_published_at:desc',
+    });
+
+    return data.stories;
+}
+
+export async function getAllAuthors() {
+    const storyblokApi = getStoryblokApi();
+
+    const { data } = await storyblokApi.get('cdn/stories', {
+        version: storyblokVersion,
+        content_type: 'author',
+        per_page: 100,
+    });
+
+    return data.stories;
+}
