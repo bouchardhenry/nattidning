@@ -2,11 +2,10 @@ import './globals.css';
 
 import StoryblokProvider from '@/components/StoryblokProvider';
 import Header from '@/components/Header';
-
-const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+import { SITE_URL } from '@/lib/site';
 
 export const metadata = {
-	metadataBase: new URL(siteUrl),
+	metadataBase: new URL(SITE_URL),
 	title: {
 		default: 'Nattidning',
 		template: '%s | Nattidning',

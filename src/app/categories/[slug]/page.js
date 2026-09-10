@@ -1,21 +1,23 @@
 import { StoryblokStory } from '@storyblok/react/rsc';
+import { notFound } from 'next/navigation';
 
 import { getStoryblokApi, storyblokVersion } from '@/lib/storyblok';
 
-/** A category page, which is a Storyblok story with a slug like `category/slug`. */
+/** A category landing page — a Storyblok story living under `categories/`. */
 export default async function CategoryPage({ params }) {
-    const { slug } = await params;
+	const { slug } = await params;
 
-    const storyblokApi = getStoryblokApi();
+	const storyblokApi = getStoryblokApi();
 
-    const { data } = await storyblokApi.get(`cdn/stories/`, {
-        version: storyblokVersion,
-        starts_with: 'categories/',
-    });
+	let story;
+	try {
+		const { data } = await storyblokApi.get(`cdn/stories/categories/${slug}`, {
+			version: storyblokVersion,
+		});
+		story = data.story;
+	} catch {
+		notFound();
+	}
 
-    const story = data.stories.find(
-        (story) => story.full_slug === `categories/${slug}`
-    )
-
-    return <StoryblokStory story={story} />;
+	return <StoryblokStory story={story} />;
 }
