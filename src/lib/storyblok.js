@@ -2,6 +2,9 @@ import { setComponents } from '@storyblok/react/rsc';
 
 import Page from '@/components/Page';
 import FilteredPosts from '@/components/FilteredPosts';
+import Teaser from '@/components/Teaser';
+import Grid from '@/components/Grid';
+import Feature from '@/components/Feature';
 
 import { getStoryblokApi, storyblokVersion } from '@/lib/storyblok-api';
 
@@ -17,6 +20,9 @@ setComponents({
 	page: Page,
 	category: Page,
 	'filtered-posts': FilteredPosts,
+	teaser: Teaser,
+	grid: Grid,
+	feature: Feature,
 });
 
 export { getStoryblokApi, storyblokVersion };

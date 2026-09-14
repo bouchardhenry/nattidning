@@ -2,6 +2,7 @@ import './globals.css';
 
 import StoryblokProvider from '@/components/StoryblokProvider';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { SITE_URL } from '@/lib/site';
 
 export const metadata = {
@@ -11,17 +12,27 @@ export const metadata = {
 		template: '%s | Nattidning',
 	},
 	description: 'Byggd med Storyblok och Next.js.',
+	openGraph: {
+		siteName: 'Nattidning',
+		locale: 'sv_SE',
+		type: 'website',
+	},
 };
 
 export default function RootLayout({ children }) {
-	const currentYear = new Date().getFullYear();
 	return (
 		<StoryblokProvider>
 			<html lang="sv">
 				<body>
+					<a className="skip-link" href="#innehall">
+						Hoppa till innehållet
+					</a>
+
 					<Header />
-					{children}
-					<footer>© {currentYear} Nattidning</footer>
+
+					<div id="innehall">{children}</div>
+
+					<Footer />
 				</body>
 			</html>
 		</StoryblokProvider>

@@ -66,6 +66,55 @@ Back in Storyblok, open the **Home** story to start editing.
 
 Happy building!
 
+## Nattidning
+
+This space is a small Swedish-language magazine built on the blueprint above.
+
+### Routes
+
+| Route               | Source                                                            |
+| ------------------- | ----------------------------------------------------------------- |
+| `/`                 | The `home` story. Falls back to a generated start page (latest articles) when `home` is not published. |
+| `/articles`         | Index of every `article` story, newest first.                      |
+| `/articles/[slug]`  | One article, with the `author` reference resolved.                  |
+| `/authors`          | Index of every `author` story.                                     |
+| `/authors/[slug]`   | One author, their bio and their articles.                          |
+| `/categories/[slug]`| A `category` story — renders its `filtered-posts` block.           |
+| `/[[...slug]]`      | Any other path, looked up as a story at the same slug; 404 if none.|
+| `/robots.txt`, `/sitemap.xml` | Generated from the space.                                |
+| `/api/revalidate`   | Storyblok webhook, see below.                                      |
+
+Content types and blocks live in `src/components` and are registered in
+`src/lib/storyblok.js`. Data access goes through `src/lib/api.js`.
+
+### Environment
+
+Copy `.env.example` to `.env`. `STORYBLOK_DELIVERY_API_TOKEN` is required;
+`SITE_URL` must be the public origin in production (it is what `robots.txt`,
+`sitemap.xml` and the canonical URLs point at).
+
+Draft content is used in development and published content in production, so a
+story that renders locally 404s in production until it is **published** in
+Storyblok.
+
+### On-demand revalidation
+
+With `STORYBLOK_REVALIDATE_SECRET` set, add a Storyblok webhook pointing at:
+
+```
+POST https://<your-domain>/api/revalidate?secret=<STORYBLOK_REVALIDATE_SECRET>
+```
+
+It drops the cached pages for the story in the payload plus the listings that
+include it. Without the secret set the endpoint answers `503` and does nothing.
+
+### Checks
+
+```sh
+npm run lint    # eslint (flat config; `next lint` was removed in Next.js 16)
+npm run build
+```
+
 ## Resources
 
 - To learn more about what you can do with Storyblok, visit [our documentation and learning hub](https://www.storyblok.com/docs).

@@ -1,31 +1,53 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-export default function Header() {
-    return (
-        <header className="site-header">
-            <Link href="/" className="site-logo">
-                Nattidning
-            </Link>
+import { getAllCategories } from '@/lib/api';
 
-            <nav className="site-nav" aria-label="Huvudmeny">
-                <Link href="/">Start</Link>
+/**
+ * Site header. The category list comes from Storyblok so a new category folder
+ * shows up in the nav without a code change.
+ *
+ * The submenu is a `<details>` element: it opens on click for touch and
+ * keyboard users, which a hover-only CSS dropdown never did.
+ */
+export default async function Header() {
+	// The header renders inside the root layout, so a throw here would escape to
+	// `global-error` and take down every page — including the 404 and error UI.
+	// A missing category list is better than a blank site.
+	let categories = [];
+	try {
+		categories = await getAllCategories();
+	} catch (error) {
+		console.error('Header: could not load categories', error);
+	}
 
-                <div className="nav-dropdown">
-                    <Link href="/articles">Artiklar</Link>
+	return (
+		<header className="site-header">
+			<Link href="/" className="site-logo">
+				Nattidning
+			</Link>
 
-                    <ul className="dropdown-menu">
-                        <li>
-                            <Link href="/articles">Alla artiklar</Link>
-                        </li>
-                        <li>
-                            <Link href="/categories/nyheter">Nyheter</Link>
-                        </li>
-                        <li>
-                            <Link href="/categories/guide">Guider</Link>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
-    );
+			<nav className="site-nav" aria-label="Huvudmeny">
+				<Link href="/">Start</Link>
+
+				<details className="nav-dropdown">
+					<summary>Artiklar</summary>
+
+					<ul className="dropdown-menu">
+						<li>
+							<Link href="/articles">Alla artiklar</Link>
+						</li>
+						{categories.map((category) => (
+							<li key={category.uuid}>
+								<Link href={`/categories/${category.slug}`}>
+									{category.name}
+								</Link>
+							</li>
+						))}
+					</ul>
+				</details>
+
+				<Link href="/authors">Skribenter</Link>
+			</nav>
+		</header>
+	);
 }
