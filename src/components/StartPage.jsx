@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import ArticleList from '@/components/ArticleList';
 import { getAllArticles } from '@/lib/api';
 
@@ -11,38 +9,18 @@ import { getAllArticles } from '@/lib/api';
  * all in production. Publishing `home` in Storyblok takes precedence over this.
  */
 export default async function StartPage() {
-	const articles = await getAllArticles();
-	const [lead, ...rest] = articles;
+	const articles = (await getAllArticles()).slice(0, 4);
 
 	return (
 		<main className="container">
-			<section className="teaser">
-				<p className="teaser-eyebrow">Nattidning</p>
-				<h1 className="teaser-headline">Läsning för sena kvällar</h1>
-				<p className="lead">
-					Artiklar om barnböcker, illustration och berättande.
-				</p>
-			</section>
-
-			{lead && (
-				<section className="lead-story">
-					<p className="eyebrow">Senast publicerat</p>
-					<h2>
-						<Link href={`/articles/${lead.slug}`}>{lead.content.title}</Link>
-					</h2>
-					{lead.content.summary && <p className="lead">{lead.content.summary}</p>}
-				</section>
-			)}
+			<h1>Välkommen till Nattidning</h1>
 
 			<section>
-				<div className="section-head">
-					<h2>Fler artiklar</h2>
-					<Link href="/articles">Alla artiklar →</Link>
-				</div>
+				<h2>Senaste artiklar</h2>
 
 				<ArticleList
-					articles={rest}
-					emptyMessage="Inga fler artiklar just nu."
+					articles={articles}
+					emptyMessage="Inga artiklar publicerade än."
 				/>
 			</section>
 		</main>
